@@ -14,7 +14,7 @@ BARBS is a customization script meant to be used in conjunction with TANKLINUX a
 
 The barbs.sh script is verbosely commented for pedagogical purposes.
 
-To install on an Arch-based system, as root, run the following:
+To install stand-alone on an Arch-based system, as root, run the following:
 
 ```
 curl -LO tanklinux.com/barbs.sh
