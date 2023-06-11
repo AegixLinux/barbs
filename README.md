@@ -1,9 +1,9 @@
 # BARBS
 
-Baseline Automation Routine for Building Systems
+TANKLINUX Base Automation Routine for Building Systems
 
 ``` Text
-B - Baseline
+B - Base
 A - Automation
 R - Routine for
 B - Building
@@ -11,6 +11,15 @@ S - Systems
 ```
 
 BARBS is a customization script meant to be used in conjunction with TANKLINUX and GOHAN, although it can be run in a stand-alone fashion on an existing Linux system.
+
+The barbs.sh script is verbosely commented for pedagogical purposes.
+
+To install on an Arch-based system, as root, run the following:
+
+```
+curl -LO tanklinux.com/barbs.sh
+sh barbs.sh
+```
 
 ``` Text
 Physical Barbs: The word "barb" often refers to a sharp projection extending backward
