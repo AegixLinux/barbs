@@ -7,6 +7,7 @@
 # Base Automation Routine for Building Systems (BARBS)
 # by TANKLINUX.com
 # License: GNU GPLv3
+# VERSION: 20230615.2
 
 # Verbosity of comments are for pedagogical purposes.
 
@@ -14,8 +15,8 @@
 # Script
 #########################################
 
-# When set -e is used, if any command in the script fails (returns non-zero), 
-# the script will immediately exit rather than continuing execution.
+# Enable the script to exit immediately if a command or pipeline has an error. 
+# This is the safest way to ensure that an unexpected error won't continue to execute further commands.
 set -e
 
 ################################
@@ -517,10 +518,9 @@ done
 ### Synchronizing System Time
 ####################
 # Ensure successful and secure installation of software by synchronizing system time.
-whiptail --title "Synchronizing System Time" \
-	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
-# ntpdate 0.us.pool.ntp.org >/dev/null 2>&1
-pacman -Qq "$1" && return 0
+# whiptail --title "Synchronizing System Time" \
+# 	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
+# pacman -Qq "$1" && return 0
 
 ####################
 #### Add User and Set Password
