@@ -27,7 +27,7 @@ set -e
 dot_files_repo="https://github.com/tanklinux/gohan.git"
 
 # user_programs_to_install value can be replaced with your own programs csv file.
-user_programs_to_install="tanklinux.com/tank-programs.csv"
+user_programs_to_install="tank-programs.csv"
 aur_helper="yay"
 
 # PENDING_UPDATE: Switch master to main for GitHub.
@@ -206,9 +206,9 @@ git_make_install() {
 	# returning non-zero (failure) if it can't change directory.
 	cd "$dir" || exit 1
 	# This line builds the program using make.
-	sudo -u "$user_name" make >/dev/null 2>&1
+	make >/dev/null 2>&1
 	# This line installs the program using make install.
-	sudo -u "$user_name" make install >/dev/null 2>&1
+	make install >/dev/null 2>&1
 	# This line returns to the previous directory, 
 	# returning non-zero (failure) if it can't change directory.
 	cd /tmp || return 1
