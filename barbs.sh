@@ -302,7 +302,7 @@ installation_loop() {
 		# It is the end of the case statement.
 		esac
 	done </tmp/tank-programs.csv
-}$user_name
+}
 
 #### gohan_install function:
 # Description: Clones a given git repository and places its contents in a specified directory, overwriting any existing files in case of conflicts.
@@ -374,7 +374,7 @@ get_user_and_pw() {
 	# Prompts user for new username an password.
 	user_name=$(whiptail --inputbox "Enter a username to login to the system as." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
 	while ! echo "$user_name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-		name=$(whiptail --nocancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
+		user_name=$(whiptail --nocancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
 	done
 	pass1=$(whiptail --nocancel --passwordbox "Enter a password for that user." 10 60 3>&1 1>&2 2>&3 3>&1)
 	pass2=$(whiptail --nocancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
