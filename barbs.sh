@@ -27,7 +27,7 @@ set -e
 dot_files_repo="https://github.com/tanklinux/gohan.git"
 
 # user_programs_to_install value can be replaced with your own programs csv file.
-user_programs_to_install="tank-programs.csv"
+user_programs_to_install="https://github.com/tanklinux/barbs/raw/master/tank-programs.csv"
 aur_helper="yay"
 
 # PENDING_UPDATE: Switch master to main for GitHub.
