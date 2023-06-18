@@ -224,7 +224,7 @@ git_make_install() {
 aur_repo_install() {
 	whiptail --title "BARBS Installation" \
 		--infobox "Installing \`$1\` ($n of $user_program_count) from the AUR. $1 $2" 9 70
-	echo "$aur_installed_packages" | grep -q "^$1$" && return 1
+	echo "$aur_installed_packages" | grep -q "^$1$" && return 0
 	sudo -u "$user_name" $aur_helper -S --noconfirm "$1" >/dev/null 2>&1
 }
 
