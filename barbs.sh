@@ -508,7 +508,7 @@ refresh_keys || error "Error automatically refreshing Arch keyring. Consider doi
 #### Installing Required Packages
 ####################
 # Install curl, ca-certificates, base-devel, git, ntp, and zsh. Required for the installation and configuration of other programs.
-for x in curl ca-certificates base-devel git ntp zsh; do
+for x in curl ca-certificates base-devel git zsh; do
 	whiptail --title "Installing Required Packages" \
 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
 	pacman_install "$x"
