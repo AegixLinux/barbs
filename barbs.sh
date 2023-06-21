@@ -648,6 +648,11 @@ echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 # Set nvim as the default editor for sudoers file.
 echo "Defaults editor=/usr/bin/nvim" >/etc/sudoers.d/02-barbs-visudo-editor
 
+####################
+#### Create basic dirs
+####################
+mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/Pictures /home/$user_name/Music /home/$user_name/Videos/obs /home/$user_name/code /home/$user_name/ss
+
 # Use dmesg without root privileges
 # mkdir -p /etc/sysctl.d
 # echo "kernel.dmesg_restrict = 0" > /etc/sysctl.d/dmesg.conf
