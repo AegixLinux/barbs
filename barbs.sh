@@ -142,7 +142,7 @@ manual_install() {
 	sudo -u "$user_name" mkdir -p "$src_repo_dir/$1"
 	sudo -u "$user_name" git -C "$src_repo_dir" clone --depth 1 --single-branch \
 		# --no-tags -q "https://aur.archlinux.org/$1.git" "$src_repo_dir/$1" ||
-		--no-tags -q "https://github.com/Jguer/$1.git" "$src_repo_dir/$1" ||
+		--no-tags -q "https://aur.archlinux.org/$1.git" "$src_repo_dir/$1" ||
 		{
 			cd "$src_repo_dir/$1" || return 1
 			sudo -u "$user_name" git pull --force origin master
