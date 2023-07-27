@@ -434,7 +434,7 @@ add_user_and_pw() {
 # Note: Make sure to update the message as per your requirements before using this function.
 welcome_message() {
 	whiptail --title "TANKLINUX.COM" \
-		--msgbox "Welcome to BARBS the Base Automation Routine for Building Systems.\\n\\nIf you made it here from the TANKLINUX installer tl.sh, then your base system is setup, we're now in a chroot environment, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nMuch Love\\n-TANKLINUX.COM" 20 60
+		--msgbox "Welcome to BARBS, the Base Automation Routine for Building Systems.\\n\\nIf you made it here from the TANKLINUX installer tl.sh, then your base system is setup, we're now in a chroot environment, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nMuch Love\\n-TANKLINUX.COM" 20 60
 
 	# whiptail --title "Important Note!" --yes-button "All ready!" \
 	# 	--no-button "Return..." \
