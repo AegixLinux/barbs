@@ -452,7 +452,7 @@ welcome_message() {
 pre_install_message() {
 	whiptail --title "Ready?" --yes-button "Let's go!" \
 		--no-button "No. Cancel BARBS!" \
-		--yesno "Time to get up and stretch a bit.\\n\\nLARBS is about to run its lengthy installation routines." 13 60 || {
+		--yesno "Time to get up and stretch a bit.\\n\\nBARBS is about to run its lengthy installation routines." 13 60 || {
 		clear
 		exit 1
 	}
