@@ -467,7 +467,7 @@ pre_install_message() {
 # Note: This function assumes that the script has completed successfully.
 finale() {
 	whiptail --title "All done!" \
-		--msgbox "Congrats! Provided there were no hidden errors, the script completed successfully and all the programs and configuration files should be in place.\\n\\nTo run the new graphical environment, log out and log back in as your new user, then run the command \"startx\" to start the graphical environment (it will start automatically in tty1).\\n\\nIf you're following the vanilla, not-luks version, type exit twice, then \"shutdown -h now\", remove the installation USB, reboot the machine, enjoy.\\n\\n -TANKLINUX.COM" 13 80
+		--msgbox "Congrats! You're done.\\n\\nIf you came from tl.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as the user you just created and type: startx to launch your new graphical environment. Logging in after reboot will land you in TTY1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-TANKLINUX.COM" 13 80
 }
 
 ################################
