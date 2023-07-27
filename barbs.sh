@@ -372,16 +372,16 @@ vim_plugin_install() {
 # Note: If the user cancels the username prompt, the script will exit. Invalid usernames or mismatched passwords will cause the prompts to repeat.
 get_user_and_pw() {
 	# Prompts user for new username an password.
-	user_name=$(whiptail --inputbox "Enter a username to login to the system as." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
+	user_name=$(whiptail --inputbox "Enter a username for logging into your TANKLINUX graphical environment." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
 	while ! echo "$user_name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
-		user_name=$(whiptail --nocancel --inputbox "Username not valid. Give a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
+		user_name=$(whiptail --nocancel --inputbox "The username you entered is not valid. Provide a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
 	done
-	pass1=$(whiptail --nocancel --passwordbox "Enter a password for that user." 10 60 3>&1 1>&2 2>&3 3>&1)
-	pass2=$(whiptail --nocancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
+	pass1=$(whiptail --nocancel --passwordbox "Enter a passphrase for that user." 10 60 3>&1 1>&2 2>&3 3>&1)
+	pass2=$(whiptail --nocancel --passwordbox "Retype your passphrase." 10 60 3>&1 1>&2 2>&3 3>&1)
 	while ! [ "$pass1" = "$pass2" ]; do
 		unset pass2
-		pass1=$(whiptail --nocancel --passwordbox "Passwords do not match.\\n\\nEnter password again." 10 60 3>&1 1>&2 2>&3 3>&1)
-		pass2=$(whiptail --nocancel --passwordbox "Retype password." 10 60 3>&1 1>&2 2>&3 3>&1)
+		pass1=$(whiptail --nocancel --passwordbox "Passphrases do not match.\\n\\nTry again." 10 60 3>&1 1>&2 2>&3 3>&1)
+		pass2=$(whiptail --nocancel --passwordbox "Retype your passphrase." 10 60 3>&1 1>&2 2>&3 3>&1)
 	done
 }
 
@@ -434,7 +434,7 @@ add_user_and_pw() {
 # Note: Make sure to update the message as per your requirements before using this function.
 welcome_message() {
 	whiptail --title "TANKLINUX.COM" \
-		--msgbox "Welcome to BARBS the Base Automation Routine for Building Systems.\\n\\nIf you made it here from tl.sh, then your base system is setup. Now let's run BARBS to set up a graphical environment.\\n\\n-TANKLINUX.COM" 20 60
+		--msgbox "Welcome to BARBS the Base Automation Routine for Building Systems.\\n\\nIf you made it here from the TANKLINUX installer tl.sh, then your base system is setup, we're now in a chroot environment, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nMuch Love\\n-TANKLINUX.COM" 20 60
 
 	# whiptail --title "Important Note!" --yes-button "All ready!" \
 	# 	--no-button "Return..." \
@@ -452,7 +452,7 @@ welcome_message() {
 pre_install_message() {
 	whiptail --title "Ready?" --yes-button "Let's go!" \
 		--no-button "No. Cancel BARBS!" \
-		--yesno "If you're ready for the BARBS automated install routine, select <Let's go!>\\n\\nI'm going to take this opportunity to stretch a bit. Maybe get a cuppa." 13 60 || {
+		--yesno "Time to get up and stretch a bit.\\n\\nLARBS is about to run its lengthy installation routines." 13 60 || {
 		clear
 		exit 1
 	}
