@@ -92,12 +92,12 @@ Server = https://mirrors.qontinuum.space/artixlinux-universe/\$arch
 Server = https://mirror1.cl.netactuate.com/artix/universe/\$arch
 Server = https://ftp.crifo.org/artix-universe/\$arch
 Server = https://artix.sakamoto.pl/universe/\$arch" >>/etc/pacman.conf
-			pacman -Sy --noconfirm >/dev/null 2>&1
-			# pacman -Sy --noconfirm >> output.log 2>&1
+			# pacman -Sy --noconfirm >/dev/null 2>&1
+			pacman -Sy --noconfirm >> output.log 2>&1
 		fi
 
 		# Install necessary keys
-		pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null
+		pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >> output.log 2>&1
 
     	# Check if the extra and community repositories are enabled, and if not, add them
 		for repo in extra community; do
@@ -107,10 +107,10 @@ Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
 		done
 		
 		# Sync package databases
-		pacman -Sy >/dev/null 2>&1
+		pacman -Sy >> output.log 2>&1
 		
 		# Populate the Arch keyring
-		pacman-key --populate archlinux >/dev/null 2>&1
+		pacman-key --populate archlinux >> output.log 2>&1
 }
 
 #### manual_install function:
