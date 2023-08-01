@@ -102,7 +102,7 @@ Server = https://ftp.crifo.org/artix-universe/" >>/etc/pacman.conf
 		for repo in extra community; do
 			grep -q "^\[$repo\]" /etc/pacman.conf ||
 				echo "[$repo]
-Include = /etc/pacman.d/mirrorlist" >>/etc/pacman.conf
+Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
 		done
 		
 		# Sync package databases
