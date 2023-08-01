@@ -53,7 +53,9 @@ export TERM=ansi
 # Output: None directly (affects system state by installing a package).
 # Note: All output (stdout and stderr) is redirected to /dev/null to suppress it.
 pacman_install() {
-	pacman --noconfirm --needed -S "$1" >/dev/null 2>&1
+	# pacman --noconfirm --needed -S "$1" >/dev/null 2>&1
+	pacman --noconfirm --needed -S "$1" >> output.log 2>&1
+
 }
 
 #### error function:
@@ -88,7 +90,8 @@ refresh_keys() {
 	# If it is, the code between this line and the following ;; is run.
 	*systemd*)
 		whiptail --infobox "Refreshing Arch Keyring..." 7 40
-		pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
+		# pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
+		pacman --noconfirm -S archlinux-keyring >> output.log 2>&1
 		;;
 	# This is the default case for the case statement. 
 	# If the init system is not systemd, the code between this line and the next ;; is run.
@@ -104,10 +107,12 @@ Server = https://mirror.pascalpuffke.de/artix-universe/\$arch
 Server = https://artixlinux.qontinuum.space/artixlinux/universe/os/\$arch
 Server = https://mirror1.cl.netactuate.com/artix/universe/\$arch
 Server = https://ftp.crifo.org/artix-universe/" >>/etc/pacman.conf
-			pacman -Sy --noconfirm >/dev/null 2>&1
+			# pacman -Sy --noconfirm >/dev/null 2>&1
+			pacman -Sy --noconfirm >> output.log 2>&1
 		fi
 		pacman --noconfirm --needed -S \
-			artix-keyring artix-archlinux-support >/dev/null 2>&1
+			# artix-keyring artix-archlinux-support >/dev/null 2>&1
+			artix-keyring artix-archlinux-support >> output.log 2>&1
 		# This for loop checks if the extra and community repositories are enabled.
 		# If they are not, it adds the necessary repository information to the pacman configuration file.
 		for repo in extra community; do
@@ -116,9 +121,11 @@ Server = https://ftp.crifo.org/artix-universe/" >>/etc/pacman.conf
 Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
 		done
 		# This line synchronizes the package databases, effectively updating the list of available packages.
-		pacman -Sy >/dev/null 2>&1
+		# pacman -Sy >/dev/null 2>&1
+		pacman -Sy >> output.log 2>&1
 		# This line imports the Arch keyring, effectively updating the keys used to verify packages.
-		pacman-key --populate archlinux >/dev/null 2>&1
+		# pacman-key --populate archlinux >/dev/null 2>&1
+		pacman-key --populate archlinux >> output.log 2>&1
 		;;
 	# This line marks the end of the case statement.
 	# esac is case spelled backwards.
@@ -148,7 +155,8 @@ manual_install() {
 		}
 	cd "$src_repo_dir/$1" || exit 1
 	sudo -u "$user_name" -D "$src_repo_dir/$1" \
-		makepkg --noconfirm -si >/dev/null 2>&1 || return 1
+		# makepkg --noconfirm -si >/dev/null 2>&1 || return 1
+		makepkg --noconfirm -si >> output.log 2>&1 || return 1
 }
 
 #### official_repo_install function:
@@ -206,9 +214,11 @@ git_make_install() {
 	# returning non-zero (failure) if it can't change directory.
 	cd "$dir" || exit 1
 	# This line builds the program using make.
-	make >/dev/null 2>&1
+	# make >/dev/null 2>&1
+	make >> output.log 2>&1
 	# This line installs the program using make install.
-	make install >/dev/null 2>&1
+	# make install >/dev/null 2>&1
+	make install >> output.log 2>&1
 	# This line returns to the previous directory, 
 	# returning non-zero (failure) if it can't change directory.
 	cd /tmp || return 1
@@ -225,7 +235,8 @@ aur_repo_install() {
 	whiptail --title "BARBS Installation" \
 		--infobox "Installing \`$1\` ($n of $user_program_count) from the AUR. $1 $2" 9 70
 	echo "$aur_installed_packages" | grep -q "^$1$" && return 0
-	sudo -u "$user_name" $aur_helper -S --noconfirm "$1" >/dev/null 2>&1
+	# sudo -u "$user_name" $aur_helper -S --noconfirm "$1" >/dev/null 2>&1
+	sudo -u "$user_name" $aur_helper -S --noconfirm "$1" >> output.log 2>&1
 }
 
 #### pip_install function:
@@ -239,7 +250,8 @@ pip_install() {
 	whiptail --title "BARBS Installation" \
 		--infobox "Installing the Python package \`$1\` ($n of $user_program_count). $1 $2" 9 70
 	# This line checks if pip is installed on the system, if not, it installs python-pip using pacman_install.
-	[ -x "$(command -v "pip")" ] || pacman_install python-pip >/dev/null 2>&1
+	# [ -x "$(command -v "pip")" ] || pacman_install python-pip >/dev/null 2>&1
+	[ -x "$(command -v "pip")" ] || pacman_install python-pip >> output.log 2>&1
 	# This line uses the pip install command to install the Python package specified by $1. 
 	# The yes | part automatically answers "yes" to any prompts that might appear during the installation process, 
 	# thereby making the installation non-interactive.
@@ -393,7 +405,8 @@ get_user_and_pw() {
 # Output: A prompt dialog to the user if the username already exists.
 # Note: If the user decides to continue, BARBS will overwrite any conflicting settings/dotfiles for the existing user and update the user password.
 user_check() {
-	! { id -u "$user_name" >/dev/null 2>&1; } ||
+	# ! { id -u "$user_name" >/dev/null 2>&1; } ||
+	! { id -u "$user_name" >> output.log 2>&1; } ||
 		whiptail --title "WARNING" --yes-button "CONTINUE" \
 			--no-button "No wait..." \
 			--yesno "The user \`$user_name\` already exists on this system. Proceeding will OVERWRITE any conflicting user configuration for this user.\\n\\nUser $user_name's password will also be updated to what you just entered." 14 70
@@ -411,7 +424,8 @@ user_check() {
 add_user_and_pw() {
 	# Adds user `$user_name` with password $pass1.
 	whiptail --infobox "Adding user \"$user_name\"..." 7 50
-	useradd -m -g wheel -s /bin/zsh "$user_name" >/dev/null 2>&1 ||
+	# useradd -m -g wheel -s /bin/zsh "$user_name" >/dev/null 2>&1 ||
+	useradd -m -g wheel -s /bin/zsh "$user_name" >> output.log 2>&1 ||
 		usermod -a -G wheel "$user_name" && mkdir -p /home/"$user_name" && chown "$user_name":wheel /home/"$user_name"
 	export src_repo_dir="/home/$user_name/.local/src"
 	mkdir -p "$src_repo_dir"
@@ -595,7 +609,8 @@ fi
 ####################
 #### Make zsh the default shell for the user.
 ####################
-chsh -s /bin/zsh "$user_name" >/dev/null 2>&1
+# chsh -s /bin/zsh "$user_name" >/dev/null 2>&1
+chsh -s /bin/zsh "$user_name" >> output.log 2>&1
 sudo -u "$user_name" mkdir -p "/home/$user_name/.cache/zsh/"
 sudo -u "$user_name" mkdir -p "/home/$user_name/.config/abook/"
 sudo -u "$user_name" mkdir -p "/home/$user_name/.config/mpd/playlists/"
