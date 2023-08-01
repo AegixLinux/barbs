@@ -396,7 +396,7 @@ user_check() {
 	! { id -u "$user_name" >/dev/null 2>&1; } ||
 		whiptail --title "WARNING" --yes-button "CONTINUE" \
 			--no-button "No wait..." \
-			--yesno "The user \`$user_name\` already exists on this system. BARBS can install for a user already existing, but it will OVERWRITE any conflicting settings/dotfiles for the user you targeted.\\n\\nBARBS will NOT overwrite your user personal files like Documents, Videos, etc., so only click <CONTINUE> if you don't mind your dot-file-type settings being overwritten.\\n\\User $user_name's password will also be updated to what you just entered." 14 70
+			--yesno "The user \`$user_name\` already exists on this system. Proceeding will OVERWRITE any conflicting user configuration for this user.\\n\\nUser $user_name's password will also be updated to what you just entered." 14 70
 }
 
 #### add_user_and_pw function:
