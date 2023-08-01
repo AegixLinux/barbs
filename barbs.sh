@@ -81,8 +81,24 @@ error() {
 # Note: All command output (stdout and stderr) is suppressed by redirecting to /dev/null.
 # Note: TANKLINUX only works with Artix Linux, at this point, but in the future, it may work with other Arch-based distros.
 refresh_keys() {
+	# This case statement checks the path that the /sbin/init symlink points to. 
+	# This is used to determine which init system the OS is using, 
+	# as this can affect how certain commands should be run. 
+	# The -f option to readlink canonicalizes the path, resolving all symlinks.
+	case "$(readlink -f /sbin/init)" in
+	# This line checks if the init system is systemd. 
+	# If it is, the code between this line and the following ;; is run.
+	*systemd*)
+		whiptail --infobox "Refreshing Arch Keyring..." 7 40
+		# pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
+		pacman --noconfirm -S archlinux-keyring >> output.log 2>&1
+		;;
+	# This is the default case for the case statement. 
+	# If the init system is not systemd, the code between this line and the next ;; is run.
+	*)
 		whiptail --infobox "Enabling Arch Repositories..." 7 40
-		    # Check if the [universe] repository is in pacman configuration, and if not, add it
+		# This if statement checks if the [universe] repository is already listed in the pacman configuration file. 
+		# If it is not, it adds a set of universe repositories to the configuration and synchronizes the package databases.
 		if ! grep -q "^\[universe\]" /etc/pacman.conf; then
 			echo "[universe]
 Server = https://universe.artixlinux.org/\$arch
@@ -95,22 +111,26 @@ Server = https://artix.sakamoto.pl/universe/\$arch" >>/etc/pacman.conf
 			pacman -Sy --noconfirm >/dev/null 2>&1
 			# pacman -Sy --noconfirm >> output.log 2>&1
 		fi
-
-		# Install necessary keys
-		pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >/dev/null
-
-    	# Check if the extra and community repositories are enabled, and if not, add them
+		pacman --noconfirm --needed -S \
+			artix-keyring artix-archlinux-support >/dev/null 2>&1
+			# artix-keyring artix-archlinux-support >> output.log 2>&1
+		# This for loop checks if the extra and community repositories are enabled.
+		# If they are not, it adds the necessary repository information to the pacman configuration file.
 		for repo in extra community; do
 			grep -q "^\[$repo\]" /etc/pacman.conf ||
 				echo "[$repo]
 Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
 		done
-		
-		# Sync package databases
+		# This line synchronizes the package databases, effectively updating the list of available packages.
 		pacman -Sy >/dev/null 2>&1
-		
-		# Populate the Arch keyring
+		# pacman -Sy >> output.log 2>&1
+		# This line imports the Arch keyring, effectively updating the keys used to verify packages.
 		pacman-key --populate archlinux >/dev/null 2>&1
+		# pacman-key --populate archlinux >> output.log 2>&1
+		;;
+	# This line marks the end of the case statement.
+	# esac is case spelled backwards.
+	esac
 }
 
 #### manual_install function:
