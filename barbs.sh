@@ -5,7 +5,7 @@
 #########################################
 
 # Base Automation Routine for Building Systems (BARBS)
-# by TANKLINUX.com
+# by aegixlinux.org
 # License: GNU GPLv3
 # VERSION: 20230615.2
 
@@ -24,10 +24,10 @@ set -e
 ################################
 
 # dot_files_repo value can be replaced with your own dotfiles repo.
-dot_files_repo="https://github.com/tanklinux/gohan.git"
+dot_files_repo="https://github.com/aegixlinux/gohan.git"
 
 # user_programs_to_install value can be replaced with your own programs csv file.
-user_programs_to_install="https://github.com/tanklinux/barbs/raw/master/tank-programs.csv"
+user_programs_to_install="https://github.com/aegixlinux/barbs/raw/master/aegix-programs.csv"
 aur_helper="yay"
 
 # PENDING_UPDATE: Switch master to main for GitHub.
@@ -79,7 +79,7 @@ error() {
 #            It then installs necessary keys and enables the extra and community repositories, if not already enabled.
 # Output: None directly (affects system state by refreshing keyring or enabling repositories).
 # Note: All command output (stdout and stderr) is suppressed by redirecting to /dev/null.
-# Note: TANKLINUX only works with Artix Linux, at this point, but in the future, it may work with other Arch-based distros.
+# Note: Aegix only works with Artix Linux, at this point, but in the future, it may work with other Arch-based distros.
 refresh_keys() {
 	# This case statement checks the path that the /sbin/init symlink points to. 
 	# This is used to determine which init system the OS is using, 
@@ -262,7 +262,7 @@ pip_install() {
 #### installation_loop function:
 # Description: Loops through a CSV file of programs to install and calls the corresponding installation function. The CSV file is expected to be in the format "tag,program name,comment". This function is explained in great detail here for pedagogical purposes.
 # Input: It relies on a CSV file with program names and their tags.
-# Operation: First, it checks if the file "$user_programs_to_install" exists locally, if it does, it's copied to /tmp/tank-programs.csv.
+# Operation: First, it checks if the file "$user_programs_to_install" exists locally, if it does, it's copied to /tmp/aegix-programs.csv.
 #            If the file does not exist locally, it's downloaded and processed to remove any commented out lines.
 #            Then, it loops through each line of the CSV file, with each line consisting of a tag, a program name, and a comment.
 #            Depending on the tag, it calls aur_repo_install, git_make_install, pip_install, or official_repo_install to install the program.
@@ -270,11 +270,11 @@ pip_install() {
 # Note: All output (stdout and stderr) is redirected to /dev/null to suppress it.
 installation_loop() {
 	# test -f checks if the file exists and is a regular file.
-	# If the file exists, it's copied to /tmp/tank-programs.csv.
+	# If the file exists, it's copied to /tmp/aegix-programs.csv.
 	# If the file does not exist, it's downloaded and processed to remove any commented out lines.
-	(test -f "$user_programs_to_install" && cp "$user_programs_to_install" /tmp/tank-programs.csv) ||
-		curl -Ls "$user_programs_to_install" | sed '/^#/d' >/tmp/tank-programs.csv
-	user_program_count=$(wc -l </tmp/tank-programs.csv)
+	(test -f "$user_programs_to_install" && cp "$user_programs_to_install" /tmp/aegix-programs.csv) ||
+		curl -Ls "$user_programs_to_install" | sed '/^#/d' >/tmp/aegix-programs.csv
+	user_program_count=$(wc -l </tmp/aegix-programs.csv)
 	# The $aur_installed_packages variable contains a list of all installed AUR packages.
 	aur_installed_packages=$(pacman -Qqm)
 	# IFS stands for Internal Field Separator. It's used to split the CSV file into fields, and it is only changed for the duration of the read command.
@@ -314,7 +314,7 @@ installation_loop() {
 		# esac is case spelled backwards.
 		# It is the end of the case statement.
 		esac
-	done </tmp/tank-programs.csv
+	done </tmp/aegix-programs.csv
 }
 
 #### gohan_install function:
@@ -385,7 +385,7 @@ vim_plugin_install() {
 # Note: If the user cancels the username prompt, the script will exit. Invalid usernames or mismatched passwords will cause the prompts to repeat.
 get_user_and_pw() {
 	# Prompts user for new username an password.
-	user_name=$(whiptail --inputbox "Enter a username for logging into your TANKLINUX graphical environment." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
+	user_name=$(whiptail --inputbox "Enter a username for logging into your Aegix graphical environment." 10 60 3>&1 1>&2 2>&3 3>&1) || exit 1
 	while ! echo "$user_name" | grep -q "^[a-z_][a-z0-9_-]*$"; do
 		user_name=$(whiptail --nocancel --inputbox "The username you entered is not valid. Provide a username beginning with a letter, with only lowercase letters, - or _." 10 60 3>&1 1>&2 2>&3 3>&1)
 	done
@@ -448,8 +448,8 @@ add_user_and_pw() {
 # Output: None directly (creates a user-facing display).
 # Note: Make sure to update the message as per your requirements before using this function.
 welcome_message() {
-	whiptail --title "TANKLINUX.COM" \
-		--msgbox "                    Welcome to BARBS!\\n\\n                    B - Base \\n                    A - Automation \\n                    R - Routine for \\n                    B - Building \\n                    S - Systems.\\n\\nIf you made it here from the TANKLINUX tl.sh script, your base system is installed. We're now inside a chroot, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nBARBS can also be run standalone, in some cases, on top of other distros." 21 60
+	whiptail --title "aegixlinux.org" \
+		--msgbox "                    Welcome to BARBS!\\n\\n                    B - Base \\n                    A - Automation \\n                    R - Routine for \\n                    B - Building \\n                    S - Systems.\\n\\nIf you made it here from the Aegix tl.sh script, your base system is installed. We're now inside a chroot, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nBARBS can also be run standalone, in some cases, on top of other distros." 21 60
 
 	# whiptail --title "Important Note!" --yes-button "All ready!" \
 	# 	--no-button "Return..." \
@@ -482,7 +482,7 @@ pre_install_message() {
 # Note: This function assumes that the script has completed successfully.
 finale() {
 	whiptail --title "All done!" \
-		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you came from tl.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as your new user and type: startx to launch the new graphical environment. Logging in after reboot will land you in tty1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-TANKLINUX.COM" 16 90
+		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you came from tl.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as your new user and type: startx to launch the new graphical environment. Logging in after reboot will land you in tty1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-aegixlinux.org" 16 90
 }
 
 ################################
@@ -578,7 +578,7 @@ manual_install yay || error "Failed to install AUR helper."
 ####################
 #### Installing User-Defined Programs
 ####################
-# Reads the tank-programs.csv file and installs each needed program as required.
+# Reads the aegix-programs.csv file and installs each needed program as required.
 installation_loop
 
 ####################
