@@ -4,7 +4,7 @@
 # Metadata
 ##
 
-# Base Automation Routine for Building Systems (BARBS)
+# Beach Automation Routine for Building Systems (BARBS)
 # by aegixlinux.org
 # License: GNU GPLv3
 # VERSION: 20230615.2
