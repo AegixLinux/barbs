@@ -1,8 +1,8 @@
 #!/bin/sh
 
-#########################################
+##
 # Metadata
-#########################################
+##
 
 # Base Automation Routine for Building Systems (BARBS)
 # by aegixlinux.org
@@ -11,39 +11,41 @@
 
 # Verbosity of comments are for pedagogical purposes.
 
-#########################################
+##
 # Script
-#########################################
+##
 
-# Enable the script to exit immediately if a command or pipeline has an error. 
+# Enables the script to exit immediately if a command or pipeline has an error. 
 # This is the safest way to ensure that an unexpected error won't continue to execute further commands.
 set -e
 
-################################
+###
 ## Initial Setup
-################################
+###
 
-# dot_files_repo value can be replaced with your own dotfiles repo.
+# Can be assigned to your own dotfiles repo if you were to fork gohan or create your own.
 dot_files_repo="https://github.com/aegixlinux/gohan.git"
 
-# user_programs_to_install value can be replaced with your own programs csv file.
-user_programs_to_install="https://github.com/aegixlinux/barbs/raw/master/aegix-programs.csv"
-aur_helper="yay"
-
-# PENDING_UPDATE: Switch master to main for GitHub.
+# Assigns the branch of your dotfiles repo to use.
 repo_branch="master"
+
+# Can be edited to point to your own csv file program list.
+user_programs_to_install="https://github.com/aegixlinux/barbs/raw/master/aegix-programs.csv"
+
+# Everyones favorite AUR helper.
+aur_helper="yay"
 
 # Set the terminal to the ANSI standard for child processes.
 # This may break on GUI terminals.
 export TERM=ansi
 
-################################
+###
 ## Functions
-################################
+###
 
-####################
+####
 ### Installation Functions
-####################
+####
 
 #### pacman_install function:
 # Description: Installs a given package using pacman.
@@ -372,9 +374,9 @@ vim_plugin_install() {
 	sudo -u "$user_name" nvim -c "PlugInstall|q|q"
 }
 
-####################
+####
 ### User Input Functions
-####################
+####
 
 #### get_user_and_pw function:
 # Description: Prompts the user for a new username and password.
@@ -435,9 +437,9 @@ add_user_and_pw() {
 	unset pass1 pass2
 }
 
-####################
+####
 ### Dialog Functions
-####################
+####
 
 #### welcome_message function:
 # Description: Displays a welcome message to the user before the start of the script execution.
@@ -449,7 +451,7 @@ add_user_and_pw() {
 # Note: Make sure to update the message as per your requirements before using this function.
 welcome_message() {
 	whiptail --title "aegixlinux.org" \
-		--msgbox "                    Welcome to BARBS!\\n\\n                    B - Base \\n                    A - Automation \\n                    R - Routine for \\n                    B - Building \\n                    S - Systems.\\n\\nIf you made it here from the Aegix tl.sh script, your base system is installed. We're now inside a chroot, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nBARBS can also be run standalone, in some cases, on top of other distros." 21 60
+		--msgbox "                    Welcome to BARBS!\\n\\n                    B - Base \\n                    A - Automation \\n                    R - Routine for \\n                    B - Building \\n                    S - Systems.\\n\\nIf you made it here from the Aegix install.sh script, your base system is installed. We're now inside a chroot, and you're ready to commence with BARBS to set up a graphical environment.\\n\\nBARBS can also be run standalone, in some cases, on top of other distros." 21 60
 
 	# whiptail --title "Important Note!" --yes-button "All ready!" \
 	# 	--no-button "Return..." \
@@ -482,46 +484,46 @@ pre_install_message() {
 # Note: This function assumes that the script has completed successfully.
 finale() {
 	whiptail --title "All done!" \
-		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you came from tl.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as your new user and type: startx to launch the new graphical environment. Logging in after reboot will land you in tty1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-aegixlinux.org" 16 90
+		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you came from install.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as your new user and type: startx to launch the new graphical environment. Logging in after reboot will land you in tty1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-aegixlinux.org" 16 90
 }
 
-################################
+###
 ## Main Script Execution
-################################
+###
 
-####################
+####
 ### Welcome User
-####################
+####
 # If the user exits, display an error message.
 welcome_message || error "User exited."
 
-####################
+####
 ### Get User and Password
-####################
+####
 # If the user exits, display an error message.
 get_user_and_pw || error "User exited."
 
-####################
+####
 ### Give warning if user already exists.
-####################
+####
 # If the user exits, display an error message.
 user_check || error "User exited."
 
-####################
+####
 ### Last Chance to Exit
-####################
+####
 # If the user exits, display an error message.
 pre_install_message || error "User exited."
 
-####################
+####
 ### Remaining Setup Does not Require User Input
-####################
+####
 # Refresh Arch keyrings. If there's an error, display a message.
 refresh_keys || error "Error automatically refreshing Arch keyring. Consider doing so manually."
 
-####################
+####
 #### Installing Required Packages
-####################
+####
 # Install curl, ca-certificates, base-devel, git, ntp, and zsh. Required for the installation and configuration of other programs.
 for x in curl ca-certificates base-devel git zsh; do
 	whiptail --title "Installing Required Packages" \
@@ -529,73 +531,73 @@ for x in curl ca-certificates base-devel git zsh; do
 	pacman_install "$x"
 done
 
-####################
+####
 ### Synchronizing System Time
-####################
+####
 # Ensure successful and secure installation of software by synchronizing system time.
 # whiptail --title "Synchronizing System Time" \
 # 	--infobox "Synchronizing system time to ensure successful and secure installation of software..." 8 70
 # pacman -Qq "$1" && return 0
 
-####################
+####
 #### Add User and Set Password
-####################
+####
 # This script calls the add_user_and_pw function. If an error occurs, it will display a custom error message.
 add_user_and_pw || error "Error adding username and/or password."
 
-####################
+####
 #### Sudoers File Handling
-####################
+####
 # Check if there is a new sudoers file present. If it is, replace the current sudoers file with it.
 [ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
 
-####################
+####
 #### Grant User Sudo Privileges
-####################
+####
 # Grant the user sudo privileges without requiring a password. This is especially important for building packages from AUR as it needs to be done in a fakeroot environment.
 trap 'rm -f /etc/sudoers.d/barbs-temp' HUP INT QUIT TERM PWR EXIT
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/barbs-temp
 
-####################
+####
 #### Configure Pacman
-####################
+####
 # Modify the pacman configuration to make it more visually appealing and to enable concurrent downloads.
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 sed -Ei "s/^#(ParallelDownloads).*/\1 = 5/;/^#Color$/s/#//" /etc/pacman.conf
 
-####################
+####
 #### Set Compilation Flags
-####################
+####
 # Adjust the makepkg.conf file to allow for concurrent compilations equal to the number of processor cores.
 sed -i "s/-j2/-j$(nproc)/;/^#MAKEFLAGS/s/^#//" /etc/makepkg.conf
 
-####################
+####
 #### Install AUR helper.
-####################
+####
 # Important for installing AUR programs.
 manual_install yay || error "Failed to install AUR helper."
 
-####################
+####
 #### Installing User-Defined Programs
-####################
+####
 # Reads the aegix-programs.csv file and installs each needed program as required.
 installation_loop
 
-####################
+####
 #### Install dotfiles
-####################
+####
 # Also remove .git dir and other unnecessary files.
 gohan_install "$dot_files_repo" "/home/$user_name" "$repo_branch"
 rm -rf "/home/$user_name/.git/" "/home/$user_name/README.md" "/home/$user_name/LICENSE" "/home/$user_name/FUNDING.yml"
 
-####################
+####
 #### Install vim Plugins
-####################
+####
 [ ! -f "/home/$user_name/.config/nvim/autoload/plug.vim" ] && vim_plugin_install
 
-####################
+####
 #### Remove Terminal Beep
-####################
+####
 # First check if loaded
 if lsmod | grep "pcspkr" &> /dev/null ; then
     # Remove module if loaded
@@ -607,31 +609,31 @@ else
 	echo "pcspkr module is not loaded, these aren't the droids you're looking for.. moving on.."
 fi 
 
-####################
+####
 #### Make zsh the default shell for the user.
-####################
+####
 chsh -s /bin/zsh "$user_name" >/dev/null 2>&1
 # chsh -s /bin/zsh "$user_name" >> output.log 2>&1
 sudo -u "$user_name" mkdir -p "/home/$user_name/.cache/zsh/"
 sudo -u "$user_name" mkdir -p "/home/$user_name/.config/abook/"
 sudo -u "$user_name" mkdir -p "/home/$user_name/.config/mpd/playlists/"
 
-####################
+####
 ### Generate DBUS UUID for Artix Runit
-####################
+####
 # Generate a unique identifier for the dbus instance for the Artix runit system.
 mkdir -p /var/lib/dbus/
 dbus-uuidgen >/var/lib/dbus/machine-id
 
-####################
+####
 ### System Notifications for Brave on Artix
-####################
+####
 # Configure the system to use the dbus system notifications for the Brave browser on Artix.
 echo "export \$(dbus-launch)" >/etc/profile.d/dbus.sh
 
-####################
+####
 ### Enable Tap to Click
-####################
+####
 # Enable the "tap to click" feature for touchpads. This means that a light tap on the touchpad surface will register as a click.
 [ ! -f /etc/X11/xorg.conf.d/40-libinput.conf ] && printf 'Section "InputClass"
         Identifier "libinput touchpad catchall"
@@ -642,9 +644,9 @@ echo "export \$(dbus-launch)" >/etc/profile.d/dbus.sh
 	Option "Tapping" "on"
 EndSection' >/etc/X11/xorg.conf.d/40-libinput.conf
 
-################################
+###
 #### User Access and Privileges
-################################
+###
 # NOTE: The commented lines below provide a less-privileged access model.
 # In this script, we do not wish to limit the user's access to root as we 
 # are assuming the user knows what they are doing.
@@ -655,18 +657,18 @@ EndSection' >/etc/X11/xorg.conf.d/40-libinput.conf
 # echo "%wheel ALL=(ALL:ALL) ALL" >/etc/sudoers.d/00-barbs-wheel-can-sudo
 # echo "%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/brightnessctl,/usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/pacman -S -u -y --config /etc/pacman.conf --,/usr/bin/pacman -S -y -u --config /etc/pacman.conf --" >/etc/sudoers.d/01-barbs-cmds-without-password
 
-####################
+####
 #### Visudo Configuration
-####################
+####
 # Enable all users in the wheel group to execute any command without a password.
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Set nvim as the default editor for sudoers file.
 echo "Defaults editor=/usr/bin/nvim" >/etc/sudoers.d/02-barbs-visudo-editor
 
-####################
+####
 #### Create basic dirs
-####################
+####
 mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/Pictures /home/$user_name/Music /home/$user_name/Videos/obs /home/$user_name/code /home/$user_name/ss
 chown -R $user_name:wheel /home/$user_name/*
 
@@ -674,9 +676,9 @@ chown -R $user_name:wheel /home/$user_name/*
 # mkdir -p /etc/sysctl.d
 # echo "kernel.dmesg_restrict = 0" > /etc/sysctl.d/dmesg.conf
 
-# ####################
+# ####
 # ### Auto-Login for LUKS
-# ####################
+# ####
 # # This section is for enabling auto-login. 
 
 # # Ask the user if they want to enable auto-login.
@@ -695,8 +697,8 @@ chown -R $user_name:wheel /home/$user_name/*
 #     ;;
 # esac
 
-################################
+###
 ### Installation Completion
-################################
+###
 # Display the final installation complete message.
 finale
