@@ -445,7 +445,7 @@ pre_install_message() {
 # This function assumes that the script has completed successfully.
 finale() {
 	whiptail --title "All done!" \
-		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you came from install.sh, you'll return there to reboot into your nice, new system.\\n\\nIf you ran BARBS standalone, you can login as your new user and type: startx to launch the new graphical environment. Logging in after reboot will land you in tty1 as default which will preclude the need to run startx\\n\\nMucho Amor\\n-aegixlinux.org" 16 90
+		--msgbox "Congrats! You're done with BARBS.\\n\\nIf you got here the traditinoal route from install.sh, you'll be returned to your nice, new system.\\n\\nIf you ran BARBS standalone, you can run startx as your new user. Logging in after reboot will land you in tty1 which will auto-run startx\\n\\nEnjoy\\nAegix" 16 90
 }
 
 ###
