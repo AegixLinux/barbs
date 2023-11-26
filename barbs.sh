@@ -10,7 +10,7 @@
 # |A|e|g|i|x|L|i|n|u|x|.|o|r|g|
 # +-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 # License: GNU GPLv3
-# VERSION: 20230615.2
+# VERSION: 20231126.1
 
 # Verbosity of comments are for pedagogical purposes.
 
