@@ -148,7 +148,7 @@ manual_install() {
 			sudo -u "$user_name" git pull --force origin master
 		}
 	cd "$src_repo_dir/$1" || exit 1
-	sudo -u "$user_name" -D "$src_repo_dir/$1" \
+	sudo -u "$user_name" \
 		makepkg --noconfirm -si >/dev/null 2>&1 || return 1
 		# makepkg --noconfirm -si >> output.log 2>&1 || return 1
 }
@@ -502,7 +502,7 @@ add_user_and_pw || error "Error adding username and/or password."
 ### Sudoers File Handling
 ####
 # Check if there is a new sudoers file present. If it is, replace the current sudoers file with it.
-[ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
+# [ -f /etc/sudoers.pacnew ] && cp /etc/sudoers.pacnew /etc/sudoers # Just in case
 
 ####
 ### Grant User Sudo Privileges
@@ -510,6 +510,7 @@ add_user_and_pw || error "Error adding username and/or password."
 # Grant the user sudo privileges without requiring a password. This is especially important for building packages from AUR as it needs to be done in a fakeroot environment.
 trap 'rm -f /etc/sudoers.d/barbs-temp' HUP INT QUIT TERM PWR EXIT
 echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/barbs-temp
+echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 ####
 ### Configure Pacman
