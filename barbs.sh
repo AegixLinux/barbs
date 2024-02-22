@@ -627,7 +627,11 @@ mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/
 chown -R $user_name:wheel /home/$user_name/*
 
 ## update bg symlink to point to user selection
-sudo ln -sf /root/aegix-forest.png bg
+if [ -f /root/aegix-forest.png ]; then
+    ln -sf /root/aegix-forest.png /home/$user_name/.local/share/bg 
+else
+    echo "User-selecteded bg does not exist."
+fi
 
 # Uncomment to use dmesg without root privileges
 # mkdir -p /etc/sysctl.d
