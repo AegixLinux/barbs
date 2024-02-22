@@ -623,8 +623,11 @@ echo "Defaults editor=/usr/bin/nvim" >/etc/sudoers.d/02-barbs-visudo-editor
 ####
 ### Create basic dirs
 ####
-mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/Pictures /home/$user_name/Music /home/$user_name/Videos/obs /home/$user_name/code /home/$user_name/ss
+mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/Pictures /home/$user_name/Music /home/$user_name/Videos/obs /home/$user_name/code /home/$user_name/ss /home/$user_name/Applications/vs-code-insider
 chown -R $user_name:wheel /home/$user_name/*
+
+## update bg symlink to point to user selection
+sudo ln -sf /root/aegix-forest.png bg
 
 # Uncomment to use dmesg without root privileges
 # mkdir -p /etc/sysctl.d
