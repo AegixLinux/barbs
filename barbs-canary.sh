@@ -34,7 +34,8 @@ dot_files_repo="https://github.com/aegixlinux/gohan.git"
 # curl -LO aegixlinux.org/aegix-programs.csv
 # user_programs_to_install="aegix-programs.csv"
 
-curl -LO --output /root/aegix-programs.csv aegixlinux.org/aegix-programs.csv
+# curl -LO --output /root/aegix-programs.csv aegixlinux.org/aegix-programs.csv
+curl -LO aegixlinux.org/aegix-programs.csv -o /root/aegix-programs.csv
 user_programs_to_install="/root/aegix-programs.csv"
 
 
