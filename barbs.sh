@@ -30,7 +30,8 @@ set -e
 dot_files_repo="https://github.com/aegixlinux/gohan.git"
 
 # Can be edited to point to your own csv file program list.
-user_programs_to_install="https://github.com/aegixlinux/barbs/raw/master/aegix-programs.csv"
+# user_programs_to_install="https://github.com/aegixlinux/barbs/raw/master/aegix-programs.csv"
+user_programs_to_install="aegix-programs.csv"
 
 # Everyones favorite AUR helper.
 aur_helper="yay"
