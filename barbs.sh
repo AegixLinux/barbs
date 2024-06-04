@@ -628,8 +628,8 @@ mkdir -p /home/$user_name/Downloads /home/$user_name/Documents /home/$user_name/
 # chown -R $user_name:wheel /root
 
 ## update bg symlink to point to user selection
-if [ -f /root/aegix-forest.png ]; then
-    ln -sf /root/aegix-forest.png /home/$user_name/.local/share/bg 
+if [ -f /root/aegix-bg.png ]; then
+    ln -sf /root/aegix-bg.png /home/$user_name/.local/share/bg 
 else
     echo "User-selecteded bg does not exist."
 fi
