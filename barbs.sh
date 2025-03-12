@@ -63,6 +63,15 @@ refresh_keys() {
             ;;
         *)
             whiptail --infobox "Enabling Arch Repositories..." 7 40
+            
+            # Remove [community] section if it exists
+            if grep -q "^\[community\]" /etc/pacman.conf; then
+                whiptail --infobox "Removing [community] section from pacman.conf..." 7 60
+                # Delete the [community] section and the Include line that follows it
+                sed -i '/^\[community\]/,/^Include = \/etc\/pacman.d\/mirrorlist-arch$/d' /etc/pacman.conf
+                log_message "Removed [community] section from pacman.conf"
+            fi
+            
             if ! grep -q "^\[universe\]" /etc/pacman.conf; then
                 cat << EOF >> /etc/pacman.conf
 [universe]
@@ -79,7 +88,8 @@ EOF
             
             pacman --noconfirm --needed -S artix-keyring artix-archlinux-support >> "${LOG_FILE}" 2>&1
             
-            for repo in extra community; do
+            # Only add extra repository, skip community
+            for repo in extra; do
                 grep -q "^\[$repo\]" /etc/pacman.conf || 
                     echo "[$repo]
 Include = /etc/pacman.d/mirrorlist-arch" >> /etc/pacman.conf
