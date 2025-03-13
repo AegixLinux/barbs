@@ -309,6 +309,22 @@ finale() {
 # SYSTEM CONFIGURATION FUNCTIONS
 #==============================================================================
 
+# Configure system locale to use 24-hour time format
+configure_24hour_time() {
+    whiptail --infobox "Configuring system to use 24-hour time format..." 7 60
+    
+    # Set LC_TIME to use 24-hour format
+    echo "LC_TIME=en_DK.UTF-8" >> /etc/locale.conf
+    
+    # Add en_DK locale to locale.gen if not already there
+    if ! grep -q "en_DK.UTF-8 UTF-8" /etc/locale.gen; then
+        echo "en_DK.UTF-8 UTF-8" >> /etc/locale.gen
+        locale-gen >> "${LOG_FILE}" 2>&1
+    fi
+    
+    log_message "System configured to use 24-hour time format"
+}
+
 # Configure pacman and makepkg settings
 configure_pacman() {
     grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
@@ -431,6 +447,7 @@ main() {
     
     # Additional system configuration
     disable_terminal_beep
+    configure_24hour_time
     chsh -s /bin/zsh "${user_name}" >> "${LOG_FILE}" 2>&1
     
     # Create necessary user directories
