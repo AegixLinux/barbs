@@ -17,7 +17,7 @@ set -e
 
 # Repository URLs and paths
 DOT_FILES_REPO="https://github.com/aegixlinux/gohan.git"
-REPO_BRANCH="master"
+REPO_BRANCH="main"
 AUR_HELPER="yay"
 
 # Set temporary directory for downloaded files
@@ -114,7 +114,7 @@ manual_install() {
         --no-tags -q "https://aur.archlinux.org/$1.git" "${src_repo_dir}/$1" ||
         {
             cd "${src_repo_dir}/$1" || return 1
-            sudo -u "${user_name}" git pull --force origin master
+            sudo -u "${user_name}" git pull --force origin HEAD
         }
 
     cd "${src_repo_dir}/$1" || exit 1
@@ -149,7 +149,7 @@ git_make_install() {
         --no-tags -q "$1" "${dir}" >> "${LOG_FILE}" 2>&1 ||
         {
             cd "${dir}" || return 1
-            sudo -u "${user_name}" git pull --force origin master >> "${LOG_FILE}" 2>&1
+            sudo -u "${user_name}" git pull --force origin HEAD >> "${LOG_FILE}" 2>&1
         }
 
     cd "${dir}" || exit 1
@@ -262,7 +262,7 @@ gohan_install() {
     whiptail --infobox "Downloading and installing config files..." 7 60
 
     # Determine which branch to use
-    [ -z "$3" ] && branch="master" || branch="${REPO_BRANCH}"
+    [ -z "$3" ] && branch="main" || branch="${REPO_BRANCH}"
 
     # Create temporary directory
     dir=$(mktemp -d)
@@ -289,7 +289,7 @@ vim_plugin_install() {
     mkdir -p "/home/${user_name}/.config/nvim/autoload"
     curl -Ls "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" > "/home/${user_name}/.config/nvim/autoload/plug.vim"
     chown -R "${user_name}:wheel" "/home/${user_name}/.config/nvim"
-    sudo -u "${user_name}" nvim -c "PlugInstall|q|q"
+    sudo -u "${user_name}" nvim --headless +"PlugInstall --sync" +qa < /dev/null
 }
 
 #==============================================================================
@@ -328,6 +328,17 @@ add_user_and_pw() {
 
     useradd -m -g wheel -s /bin/zsh "$user_name" >> "${LOG_FILE}" 2>&1 ||
         usermod -a -G wheel "$user_name" && mkdir -p /home/"$user_name" && chown "$user_name":wheel /home/"$user_name"
+
+    # Supplementary groups the Aegix desktop actually needs. Without `video`
+    # the backlight (/sys/class/backlight/*/brightness, root:video 664) is
+    # unwritable and brightness controls silently need root; the others cover
+    # TTY/seat access, serial devices, printing, and removable media. Added
+    # only when the group exists, since group sets vary across installs.
+    for grp in video tty seat input audio uucp lp plugdev storage network; do
+        getent group "$grp" >/dev/null 2>&1 &&
+            usermod -a -G "$grp" "$user_name" >> "${LOG_FILE}" 2>&1
+    done
+    log_message "Added $user_name to desktop groups: $(id -nG "$user_name" 2>/dev/null)"
 
     export src_repo_dir="/home/$user_name/.local/src"
     mkdir -p "$src_repo_dir"
@@ -371,16 +382,26 @@ finale() {
 configure_24hour_time() {
     whiptail --infobox "Configuring system to use 24-hour time format..." 7 60
 
-    # Set LC_TIME to use 24-hour format
-    echo "LC_TIME=en_DK.UTF-8" >> /etc/locale.conf
-
-    # Add en_DK locale to locale.gen if not already there
-    if ! grep -q "en_DK.UTF-8 UTF-8" /etc/locale.gen; then
-        echo "en_DK.UTF-8 UTF-8" >> /etc/locale.gen
-        locale-gen >> "${LOG_FILE}" 2>&1
+    # Generate en_DK BEFORE pointing LC_TIME at it. The stock /etc/locale.gen
+    # ships every locale commented out, so an unanchored grep for the entry
+    # matches the "#en_DK.UTF-8 UTF-8" line and wrongly concludes it is already
+    # enabled: the locale never gets generated, and every program that calls
+    # setlocale() strictly (rofi, among others) then dies on startup.
+    if ! locale -a 2>/dev/null | grep -qi '^en_DK\.utf8$'; then
+        sed -i 's/^#[[:space:]]*en_DK\.UTF-8 UTF-8/en_DK.UTF-8 UTF-8/' /etc/locale.gen
+        grep -q '^en_DK\.UTF-8 UTF-8' /etc/locale.gen ||
+            echo "en_DK.UTF-8 UTF-8" >> /etc/locale.gen
+        locale-gen >> "${LOG_FILE}" 2>&1 || true
     fi
 
-    log_message "System configured to use 24-hour time format"
+    # Only adopt the 24-hour locale if it actually exists now. A missing
+    # LC_TIME costs 12-hour clocks; a broken one costs the whole desktop.
+    if locale -a 2>/dev/null | grep -qi '^en_DK\.utf8$'; then
+        echo "LC_TIME=en_DK.UTF-8" >> /etc/locale.conf
+        log_message "System configured to use 24-hour time format"
+    else
+        log_message "WARNING: en_DK.UTF-8 unavailable; leaving LC_TIME unset" | tee -a "${ERROR_LOG}"
+    fi
 }
 
 # Configure pacman and makepkg settings
@@ -398,9 +419,14 @@ setup_user_directories() {
     mkdir -p /home/$user_name/Music
     mkdir -p /home/$user_name/Videos/obs
     mkdir -p /home/$user_name/code
+    # AppImages have a documented home so users have somewhere obvious to put
+    # them; the README explains the format and the aegix-appimage tooling.
+    mkdir -p /home/$user_name/Applications
 
     # Copy background image to user's home if available
-    if [ -f /root/aegix-bg.jpg ]; then
+    # The skel may already provide the Aegix default wallpaper (MT_FUJI via the
+    # ISO pipeline); only fall back to the downloaded background when absent.
+    if [ -f /root/aegix-bg.jpg ] && [ ! -s "/home/$user_name/.local/share/bg" ]; then
         mkdir -p /home/$user_name/.local/share
         cp /root/aegix-bg.jpg /home/$user_name/.local/share/bg
     else
@@ -435,7 +461,7 @@ disable_terminal_beep() {
     fi
 }
 
-# Configure DBUS for Artix Runit
+# Configure DBUS for runit
 configure_dbus() {
     mkdir -p /var/lib/dbus/
     dbus-uuidgen > /var/lib/dbus/machine-id
@@ -506,9 +532,15 @@ main() {
     # Install user programs
     installation_loop
 
-    # Install configuration files
-    gohan_install "${DOT_FILES_REPO}" "/home/${user_name}" "${REPO_BRANCH}"
-    rm -rf "/home/${user_name}/.git/" "/home/${user_name}/README.md" "/home/${user_name}/LICENSE" "/home/${user_name}/FUNDING.yml"
+    # Install configuration files. When the target /etc/skel carries the Aegix
+    # dotfiles (seeded from the ISO by install.sh), useradd -m has already
+    # populated the home and gohan is not consulted: the ISO is the single
+    # source of truth. The gohan clone remains only as a fallback for running
+    # BARBS standalone on a system without the Aegix skel.
+    if [ ! -e "/home/${user_name}/.config/x11/xinitrc" ]; then
+        gohan_install "${DOT_FILES_REPO}" "/home/${user_name}" "${REPO_BRANCH}"
+        rm -rf "/home/${user_name}/.git/" "/home/${user_name}/README.md" "/home/${user_name}/LICENSE" "/home/${user_name}/FUNDING.yml"
+    fi
 
     # Install NeoVim plugins if needed
     [ ! -f "/home/${user_name}/.config/nvim/autoload/plug.vim" ] && vim_plugin_install
@@ -532,10 +564,19 @@ main() {
     # Setup user directories and files
     setup_user_directories
 
-    # Clean up temporary NOPASSWD sudo access
-    log_message "Removing temporary NOPASSWD sudo access..."
+    # Aegix keeps wheel passwordless by design: this is a single-user
+    # workstation distro where the desktop itself (statusbar actions, power
+    # controls, package tooling) is expected to act without a password prompt.
+    # Move it out of /etc/sudoers into a dedicated drop-in so it survives
+    # sudo package upgrades and is obvious to anyone auditing the system.
+    log_message "Installing permanent NOPASSWD sudo for wheel..."
     rm -f /etc/sudoers.d/barbs-temp
     sed -i '/%wheel ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers
+    printf '%%wheel ALL=(ALL) NOPASSWD: ALL\n' > /etc/sudoers.d/01-aegix-wheel
+    chmod 440 /etc/sudoers.d/01-aegix-wheel
+    visudo -cf /etc/sudoers.d/01-aegix-wheel >> "${LOG_FILE}" 2>&1 ||
+        { log_message "ERROR: sudoers drop-in invalid, removing" | tee -a "${ERROR_LOG}"
+          rm -f /etc/sudoers.d/01-aegix-wheel; }
 
     # Display completion message
     finale
